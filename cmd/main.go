@@ -26,7 +26,11 @@ func GetProductHandler(w http.ResponseWriter, r *http.Request){
 
 	w.WriteHeader(http.StatusOK)
 
-	var data, _ = json.Marshal("qwe")
+	var structInstance response
+	structInstance.Status = 418;
+	structInstance.Result = "I'm a teapot"
+
+	var data, _ = json.Marshal(structInstance)
 
 	w.Write(data)
 }
