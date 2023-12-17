@@ -13,7 +13,7 @@ type response struct {
 //not a response level function
 func newResponse(data interface{}, status int) *response {
 	return &response{
-		Status: status,
+		Status: status, //status will be present in a response header as well as in a response body
 		Result: data,
 	}
 }
@@ -26,11 +26,11 @@ func (resp *response) bytes() []byte {
 func (resp *response)sendResponse(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Accept-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusTeapot)
+	w.WriteHeader(resp.Status)
 
 	w.Write(resp.bytes())
 }
 
 func StatusOk(w http.ResponseWriter, r *http.Request, data interface{}){
-	newResponse(data, http.StatusOK).sendResponse(w, r)
+	newResponse(data, http.StatusTeapot).sendResponse(w, r)
 }
