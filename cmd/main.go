@@ -2,8 +2,8 @@ package main
 
 import (
 	"net/http"
-	"github.com/go-chi/chi"
-	"encoding/json"
+	"github.com/go-chi/chi"	
+	HttpStatusx "go-crud-dynamo-mix/utils/http"
 )
 
 func main() {
@@ -11,31 +11,30 @@ func main() {
 
 	var router *chi.Mux
 
-	router = chi.NewRouter() //2
+	router = chi.NewRouter() //2 to handle requests on incoming connections
 
 	router.Route("/product", func(r chi.Router){ //3
 		r.Get("/", GetProductHandler)//4
+		r.Get("/{ID}", GetProductHandler)
 	})
 
-	http.ListenAndServe(port, router) //1
+	http.ListenAndServe(port, router) //1 
 }
 
 func GetProductHandler(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Accept-Control-Allow-Origin", "*")
+	myResponseData := "myResponseData"
 
-	w.WriteHeader(http.StatusOK)
-
-	var structInstance response
-	structInstance.Status = 418;
-	structInstance.Result = "I'm a teapot"
-
-	var data, _ = json.Marshal(structInstance)
-
-	w.Write(data)
+	if chi.URLParam(r, "ID") != ""{
+		GetOneProduct(w, r, myResponseData)
+	} else {
+		GetAllProducts(w, r, myResponseData)
+	}
 }
 
-type response struct {
-	Status int `json:"status"`
-	Result interface{} `json:"result"`
+func GetOneProduct(w http.ResponseWriter, r *http.Request, myResponseData interface{}){
+	HttpStatusx.StatusOk(w, r, myResponseData)
+}
+
+func GetAllProducts(w http.ResponseWriter, r *http.Request, myResponseData interface{}){
+	HttpStatusx.StatusOk(w, r, myResponseData)
 }
